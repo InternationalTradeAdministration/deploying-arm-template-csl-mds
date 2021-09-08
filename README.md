@@ -1,11 +1,6 @@
 # Deploying Arm Template CSL Services MDS
 Deploying Azure ARM Template deployment using Build and Release in Azure Pipelines
 
----
-title: Create Azure ARM Template deployment using Azure Pipelines.
-layout: page
----
-
 
 ## Overview ##
 
@@ -54,15 +49,11 @@ How to configure Azure ARM Template deployment using Build and Release in Azure 
 
     ![](images/009.png)
     
-1. Select Location (Recommended **West Europe**)
+1. Select Location (Recommended **East US**)
 
-1. Select template Location  **URL of the file**
+1. Select template Location  **Linked  artifact**
     
     ![](images/009.png)
-
-1. Copy paste following url to the link **https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-aci-wordpress/azuredeploy.json**
-
-    ![](images/010.png)
     
 1. View parameters that you can override by clicking **...*** on the right side. Normally this would work but this time it won't since Github doesn't allow CORS requests. Click **+Add** and enter **mysqlPassword** on name and then what you want on value. Then click **OK**
 
