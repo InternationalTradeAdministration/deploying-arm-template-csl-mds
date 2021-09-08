@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "value": "cbp-api-events"
+        },
+        "location": {
+            "value": "eastus"
+        },
+        "apiVersion": {
+            "value": "2017-04-01-preview"
+        },
+        "sku": {
+            "value": "standard"
+        },
+        "jobType": {
+            "value": "Cloud"
+        },
+        "contentStoragePolicy": {
+            "value": "SystemAccount"
+        },
+        "compatibilityLevel": {
+            "value": "1.2"
+        },
+        "jobStorageAccount": {
+            "value": {
+                "accountName": "",
+                "accountKey": ""
+            }
+        },
+        "transformation": {
+            "value": {
+                "name": "Transformation",
+                "properties": {
+                    "streamingUnits": 1,
+                    "query": "SELECT\r\n    *\r\nINTO\r\n    [YourOutputAlias]\r\nFROM\r\n    [YourInputAlias]"
+                }
+            }
+        },
+        "enableMsi": {
+            "value": false
+        },
+        "identity": {
+            "value": {
+                "type": "SystemAssigned"
+            }
+        }
+    }
+}

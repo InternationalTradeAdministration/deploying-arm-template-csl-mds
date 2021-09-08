@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topics_evgt_mds_Dev_name": {
+            "defaultValue": "evgt-mds-Dev",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.EventGrid/topics",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[parameters('topics_evgt_mds_Dev_name')]",
+            "location": "eastus",
+            "tags": {
+                "Environment": "Development",
+                "Project Name": "MDS PLATFORM",
+                "System": "Microsoft Data Services",
+                "Owner": " PD - Production Development"
+            },
+            "sku": {
+                "name": "Basic"
+            },
+            "kind": "Azure",
+            "identity": {
+                "type": "None"
+            },
+            "properties": {
+                "inputSchema": "EventGridSchema",
+                "publicNetworkAccess": "Enabled"
+            }
+        }
+    ]
+}

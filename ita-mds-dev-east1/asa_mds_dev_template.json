@@ -1,0 +1,68 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.5.0.0",
+    "parameters": {
+        "name": {
+            "type": "String"
+        },
+        "location": {
+            "type": "String"
+        },
+        "apiVersion": {
+            "type": "String"
+        },
+        "sku": {
+            "type": "String"
+        },
+        "jobType": {
+            "defaultValue": "Cloud",
+            "type": "String"
+        },
+        "contentStoragePolicy": {
+            "defaultValue": "SystemAccount",
+            "type": "String"
+        },
+        "compatibilityLevel": {
+            "type": "String"
+        },
+        "jobStorageAccount": {
+            "type": "Object"
+        },
+        "transformation": {
+            "type": "Object"
+        },
+        "enableMsi": {
+            "type": "Bool"
+        },
+        "identity": {
+            "defaultValue": {
+                "type": "SystemAssigned"
+            },
+            "type": "Object"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.StreamAnalytics/StreamingJobs",
+            "apiVersion": "[parameters('apiVersion')]",
+            "name": "[parameters('name')]",
+            "location": "[parameters('location')]",
+            "identity": "[if(parameters('enableMsi'), parameters('identity'), json('null'))]",
+            "properties": {
+                "sku": {
+                    "name": "[parameters('sku')]"
+                },
+                "outputErrorPolicy": "stop",
+                "eventsOutOfOrderPolicy": "adjust",
+                "eventsOutOfOrderMaxDelayInSeconds": 0,
+                "eventsLateArrivalMaxDelayInSeconds": 5,
+                "contentStoragePolicy": "[parameters('contentStoragePolicy')]",
+                "jobType": "[parameters('jobType')]",
+                "dataLocale": "en-US",
+                "transformation": "[if(parameters('enableMsi'), json('null'), parameters('transformation'))]",
+                "jobStorageAccount": "[if(equals(parameters('contentStoragePolicy'), 'SystemAccount'), json('null'), parameters('jobStorageAccount'))]",
+                "compatibilityLevel": "[parameters('compatibilityLevel')]"
+            }
+        }
+    ]
+}

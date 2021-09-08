@@ -1,0 +1,246 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "namespaces_evhns_mds_Dev_name": {
+            "defaultValue": "evhns-mds-Dev",
+            "type": "String"
+        },
+        "storageAccounts_itadatatloader1_externalid": {
+            "defaultValue": "/subscriptions/675d7977-79af-4b94-b0bd-26d4095a4ffb/resourceGroups/ITA-MSDataServices-Dev-East1/providers/Microsoft.Storage/storageAccounts/itadatatloader1",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.EventHub/namespaces",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[parameters('namespaces_evhns_mds_Dev_name')]",
+            "location": "East US",
+            "tags": {
+                "Environment": "Development",
+                "Project Name": "MDS PLATFORM",
+                "System": "Microsoft Data Services",
+                "Owner": " PD - Production Development"
+            },
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "properties": {
+                "disableLocalAuth": false,
+                "zoneRedundant": true,
+                "isAutoInflateEnabled": false,
+                "maximumThroughputUnits": 0,
+                "kafkaEnabled": true
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('namespaces_evhns_mds_Dev_name'), '/ListenAccessKey')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_evhns_mds_Dev_name'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Listen"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('namespaces_evhns_mds_Dev_name'), '/RootManageSharedAccessKey')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_evhns_mds_Dev_name'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Listen",
+                    "Manage",
+                    "Send"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('namespaces_evhns_mds_Dev_name'), '/SendAccessKey')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_evhns_mds_Dev_name'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Send"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('namespaces_evhns_mds_Dev_name'), '/cbp-api')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_evhns_mds_Dev_name'))]"
+            ],
+            "properties": {
+                "messageRetentionInDays": 1,
+                "partitionCount": 1,
+                "status": "Active",
+                "captureDescription": {
+                    "enabled": true,
+                    "encoding": "Avro",
+                    "destination": {
+                        "name": "EventHubArchive.AzureBlockBlob",
+                        "properties": {
+                            "storageAccountResourceId": "[parameters('storageAccounts_itadatatloader1_externalid')]",
+                            "blobContainer": "cbp-api-event-hub-capture",
+                            "archiveNameFormat": "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
+                        }
+                    },
+                    "intervalInSeconds": 60,
+                    "sizeLimitInBytes": 314572800,
+                    "skipEmptyArchives": true
+                }
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('namespaces_evhns_mds_Dev_name'), '/odp')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_evhns_mds_Dev_name'))]"
+            ],
+            "properties": {
+                "messageRetentionInDays": 1,
+                "partitionCount": 1,
+                "status": "Active",
+                "captureDescription": {
+                    "enabled": true,
+                    "encoding": "Avro",
+                    "destination": {
+                        "name": "EventHubArchive.AzureBlockBlob",
+                        "properties": {
+                            "storageAccountResourceId": "[parameters('storageAccounts_itadatatloader1_externalid')]",
+                            "blobContainer": "odp-event-hub-capture",
+                            "archiveNameFormat": "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
+                        }
+                    },
+                    "intervalInSeconds": 300,
+                    "sizeLimitInBytes": 314572800,
+                    "skipEmptyArchives": true
+                }
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/networkRuleSets",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('namespaces_evhns_mds_Dev_name'), '/default')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_evhns_mds_Dev_name'))]"
+            ],
+            "properties": {
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [],
+                "ipRules": []
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('namespaces_evhns_mds_Dev_name'), '/cbp-api/cbp-api-events-input_policy')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_evhns_mds_Dev_name'), 'cbp-api')]",
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_evhns_mds_Dev_name'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Listen"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('namespaces_evhns_mds_Dev_name'), '/cbp-api/cbp-api-events-input_send-policy')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_evhns_mds_Dev_name'), 'cbp-api')]",
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_evhns_mds_Dev_name'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Send"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('namespaces_evhns_mds_Dev_name'), '/odp/PreviewDataPolicy')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_evhns_mds_Dev_name'), 'odp')]",
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_evhns_mds_Dev_name'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Listen"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('namespaces_evhns_mds_Dev_name'), '/cbp-api/$Default')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_evhns_mds_Dev_name'), 'cbp-api')]",
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_evhns_mds_Dev_name'))]"
+            ],
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('namespaces_evhns_mds_Dev_name'), '/odp/$Default')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_evhns_mds_Dev_name'), 'odp')]",
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_evhns_mds_Dev_name'))]"
+            ],
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('namespaces_evhns_mds_Dev_name'), '/cbp-api/cbp-api-events_cbp-api-events-input_consumer_group')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_evhns_mds_Dev_name'), 'cbp-api')]",
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_evhns_mds_Dev_name'))]"
+            ],
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('namespaces_evhns_mds_Dev_name'), '/odp/preview_data_consumer_group')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_evhns_mds_Dev_name'), 'odp')]",
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_evhns_mds_Dev_name'))]"
+            ],
+            "properties": {}
+        }
+    ]
+}
