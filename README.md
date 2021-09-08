@@ -43,7 +43,7 @@ How to configure Azure ARM Template deployment using Build and Release in Azure 
 
 1. Select Azure Subscription
 
-    ![](images/008.png)
+    ![](images/007.png)
     
 1. Select Resource Group from dropdown. If you don't have an existing resource group go and create one on azure portal. Come back to this step and click the refresh sign on right.
 
