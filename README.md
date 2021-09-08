@@ -79,4 +79,4 @@ How to configure Azure ARM Template deployment using Build and Release in Azure 
 
    ![](images/016.png)
    
-1. Clean up your deployment from Azure portal
+1. Validate from azure portal to confirm if the resource you just deployed is showing up in your resource group
