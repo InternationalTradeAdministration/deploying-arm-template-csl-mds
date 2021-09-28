@@ -57,26 +57,26 @@ How to configure Azure ARM Template deployment using Build and Release in Azure 
     
 1. View parameters that you can override by clicking **...*** on the right side. Normally this would work but this time it won't since Github doesn't allow CORS requests. Click **+Add** and enter **mysqlPassword** on name and then what you want on value. Then click **OK**
 
-    ![](images/011.png)
+    ![](images/010.png)
 
 1. Save your definition **Save**.
 
-    ![](images/012.png)
+    ![](images/011.png)
     
 1. Create new release
 
-    ![](images/013.png)
+    ![](images/012.png)
     
 1. Keep defaults and click **Create**
 
-   ![](images/014.png)
+   ![](images/013.png)
    
 1. Open your newly created **Release-1**
 
-   ![](images/015.png)
+   ![](images/014.png)
    
 1. Wait and enjoy the nice animation
 
-   ![](images/016.png)
+   ![](images/015.png)
    
 1. Validate from azure portal to confirm if the resource you just deployed is showing up in your resource group
